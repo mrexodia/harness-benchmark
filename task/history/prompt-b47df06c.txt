@@ -1,0 +1,34 @@
+Build a finished, playable, top-down pixel-art fishing game that runs in the browser, inspired by the warmth and visual detail of cozy farming games like Stardew Valley. All setting, characters, fish and artwork must be original. This is a visual-first task: it should feel like a tiny game someone would want to play, not a tech demo or placeholder scene.
+
+SCENE
+One island fishing spot: a small angler on a dock or shoreline, animated water, a readable shoreline, lush vegetation and a few well-chosen environmental details. A rich but controlled palette, clear silhouettes, shadows and depth. Subtle motion in the water, bobber and surroundings. 2D only. The angler stays in one place.
+
+Render the scene on a 320×180 logical canvas scaled up 4× with no smoothing, so every art pixel is the same size. The angler is roughly 16–24 logical pixels tall. The scene fills a 16:9 layout that fits a 1280×720 viewport without scrolling. Controls and catch information stay compact and legible, covering no more than about a fifth of the screen; UI text may be drawn at full resolution.
+
+GAME LOOP
+Show a short instruction. Space and a visible on-screen button do the same action:
+1. Cast: the line is visibly thrown and the bobber lands in the water.
+2. After a short, variable wait, a bite: a clear bobber reaction and an unmistakable cue.
+3. Press once during a generous, visibly indicated bite window to reel in. Show a brief catch animation and a satisfying reveal, then allow the next cast.
+Missing the window loses the bite and returns to ready. No overlapping casts or duplicate catches from repeated key presses. A successful cycle takes roughly 5–9 seconds. Timers pause while the tab is hidden (document.hidden). No sound or audio of any kind.
+
+RARITIES
+Each successful catch picks one rarity with exactly these odds, with no pity rules, rerolls or history-dependent changes:
+Common 45%, Uncommon 25%, Rare 15%, Epic 8%, Legendary 5%, Ancient 2%.
+Each tier has at least one original named fish with recognizable artwork. The reveal shows the fish, its name and the rarity word, with a visual treatment that differs by tier in more than color. Ancient should feel special but fit the same art style. A compact log shows the last eight catches, newest first; misses are not logged. A small legend shows the six odds.
+
+TEST INTERFACE
+Expose a global window.fishing object with:
+- state: the current phase, one of "ready" (a cast is possible), "waiting" (line cast, no bite yet), "bite" (the bite window is open), "reeling" (catch animation), "reveal" (the caught fish is shown).
+- pickRarity(u): a pure function that takes a number in [0, 1) and returns one of the six rarity names exactly as spelled above. For every successful catch the game must call window.fishing.pickRarity(Math.random()) through this object, so that replacing the function changes the outcome.
+- log: every successful catch this session (not just the last eight) as an array of { name, rarity }, newest first.
+The interface must not change ordinary play or add visible debug elements.
+
+CONSTRAINTS
+- Draw all art in code. No downloaded, generated or embedded image files, emoji, icon sets, fonts or game assets. Small code libraries are fine, installed inside this project folder.
+- Node, Python 3 and Playwright (headless Chromium) are already installed globally; use them rather than installing another browser.
+- The game is served as static files with `python3 -m http.server 8000 --bind 127.0.0.1` from the current folder and loads at http://127.0.0.1:8000/ with no network access.
+- Out of scope: movement, maps, inventory, saving, shops, quests, combat, upgrades.
+
+DONE MEANS
+Work autonomously: make reasonable choices and don't ask questions. Before finishing, play the game end-to-end in a real browser (cast, bite, catch, miss, repeat), look at how it actually renders, and fix what you find. Finish with a short summary: how to launch it, what you tested, and any known issues.

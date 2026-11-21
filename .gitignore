@@ -1,0 +1,27 @@
+# Private config: model providers and local overrides (see providers/README.md).
+local/
+
+# Run output: workspaces, transcripts, traces and eval videos (~760 MB).
+runs/
+
+# Rating session: clips, game copies, the sealed mapping and live ratings (~680 MB).
+rating/session/
+# Built static site (python3 rating/export_static.py), published separately.
+rating/site/
+# Safety copies made before session changes.
+rating/backups/
+rating/static/empty/
+
+# Generated reports and the showcase video.
+report/
+showcase/
+
+# Image digests are specific to the machine that built the images.
+config/images.lock.json
+
+# Tooling
+node_modules/
+__pycache__/
+*.pyc
+.DS_Store
+*.tmp

@@ -1,0 +1,8 @@
+{
+  "name": "hc-evaluator",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "pngjs": "7.0.0"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "_doc": "Prompt versions by sha256. hc eval scores log_timing only for prompts that ask for it; older runs report it unscored. The text of each version is in task/history/prompt-<first 8 hex>.txt (earlier versions ab15c9bb and e39325a1 were not archived).",
+  "ab15c9bb": {
+    "version": 1,
+    "runs": "smoke",
+    "log_timing": "reported"
+  },
+  "e39325a1": {
+    "version": 2,
+    "runs": "var-01..05",
+    "log_timing": "reported"
+  },
+  "b47df06c": {
+    "version": 3,
+    "runs": "p2-01..10",
+    "log_timing": "reported"
+  },
+  "38402973": {
+    "version": 4,
+    "runs": "p3-*",
+    "log_timing": "scored"
+  }
+}

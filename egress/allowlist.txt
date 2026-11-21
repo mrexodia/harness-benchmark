@@ -1,0 +1,7 @@
+# Package registries the agent may reach. One host per line; "*.x" matches subdomains;
+# "host:port" also allows that port (otherwise HTTPS tunnels are limited to 443).
+# The model endpoint host is added per run from config (EXTRA_ALLOW).
+registry.npmjs.org
+registry.yarnpkg.com
+pypi.org
+files.pythonhosted.org
