@@ -98,6 +98,8 @@ def cmd_build(args):
 
 def cmd_run(args):
     cfg = load_config(args.provider)
+    if getattr(args, "thinking", None):
+        cfg["HC_THINKING"] = args.thinking
     harness = args.harness
     hdir = ROOT / "harnesses" / harness
     if not (hdir / "run.sh").exists():
@@ -107,7 +109,7 @@ def cmd_run(args):
         raise SystemExit(f"missing secret env vars on the host: {', '.join(missing)}")
 
     run_id = args.run_id or f"{harness}-{dt.datetime.now():%Y%m%d-%H%M%S}-{secrets.token_hex(2)}"
-    rdir = RUNS / run_id
+    rdir = Path(getattr(args, "runs_dir", None) or RUNS).resolve() / run_id
     if rdir.exists():
         raise SystemExit(f"run dir exists: {rdir}")
     rdir.mkdir(parents=True)
@@ -258,7 +260,8 @@ def cmd_batch(args):
     for item in data["queue"]:
         if item["done"]:
             continue
-        rdir = cmd_run(argparse.Namespace(harness=item["harness"], provider=item.get("provider"), run_id=None, minutes=None, no_eval=False))
+        rdir = cmd_run(argparse.Namespace(harness=item["harness"], provider=item.get("provider"), thinking=None,
+                                          runs_dir=None, run_id=None, minutes=None, no_eval=False))
         item.update(run_id=rdir.name, done=True)
         q.write_text(json.dumps(data, indent=2) + "\n")
 
@@ -270,6 +273,8 @@ def main():
     p = sub.add_parser("run")
     p.add_argument("--harness", required=True)
     p.add_argument("--provider", help="override PROVIDER (a folder in local/providers/ or providers/)")
+    p.add_argument("--thinking", help="override HC_THINKING for this run (off, minimal, low, medium, high, xhigh, max)")
+    p.add_argument("--runs-dir", help="where to put the run folder (default runs/); use another folder to keep a run out of the study")
     p.add_argument("--run-id")
     p.add_argument("--minutes", help="override WALL_CLOCK_MINUTES (smoke tests only)")
     p.add_argument("--no-eval", action="store_true")

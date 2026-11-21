@@ -3,6 +3,7 @@ local/
 
 # Run output: workspaces, transcripts, traces and eval videos (~760 MB).
 runs/
+runs-*/
 
 # Rating session: clips, game copies, the sealed mapping and live ratings (~680 MB).
 rating/session/
