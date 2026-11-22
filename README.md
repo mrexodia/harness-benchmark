@@ -46,8 +46,12 @@ python3 rating/serve.py                      # open http://127.0.0.1:8100/
 python3 rating/report.py                     # only works once both passes are locked
 ```
 
-Once both passes are locked, the rating page itself shows the results: which run
-and harness every clip came from, and the rater's own ranking of the runs.
+The step bar under the header shows where the rater is. Finished steps of a
+pass that is still open can be reopened to review and edit scores; steps not
+reached yet stay closed, and pass 2 opens only after pass 1 is locked. Once
+both passes are locked, the rating page shows the results: which run and
+harness every clip came from, the rater's own ranking of the runs, and a page
+per run with its three clips, its game and the scores given.
 
 Sharing the rating as a static site (GitHub Pages or any file host):
 
@@ -138,6 +142,11 @@ The session runs in the order in plan.md. Some details the plan leaves open:
 - **Layout:** overflow past 1280×720 fails only on an axis the viewer can
   scroll; content clipped by `overflow: hidden` on the root or body is
   counted in `clipped_overflow_seen` but passes.
+- **Game in a subfolder:** if the workspace has no `index.html` but exactly
+  one top-level folder has one (e.g. the agent built everything in `fishing/`),
+  the evaluator serves that folder as if it were the root, and the rating kit
+  uses it too. The reported `game_folder` check and `served_from` in
+  `results.json` record it; it costs no points. Evaluator version 9.
 - **Showcase order and hook timing:** the first natural catch is hooked at
   once (the gate), then comes the miss, which measures the bite window; after a miss the
   evaluator waits 2.5 s before casting again so the game's miss feedback is

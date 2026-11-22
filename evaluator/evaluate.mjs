@@ -14,6 +14,8 @@ const argv = Object.fromEntries(process.argv.slice(2).reduce((a, v, i, arr) => (
 const ROOT = argv.root || "/tmp/ws";
 const OUT = argv.out || "/out";
 const URL_ = argv.url || "http://127.0.0.1:8000/";
+// Set by entry.sh when the game was built in a single subfolder and served from there.
+const SERVED_FROM = argv["served-from"] || ".";
 const SHOTS = join(OUT, "screenshots");
 mkdirSync(SHOTS, { recursive: true });
 
@@ -47,6 +49,7 @@ const CHECKS = [
   ["cycle_time", "reported", "Cycle time"],
   ["pixel_grid", "reported", "Pixel grid"],
   ["onscreen_control", "reported", "On-screen control"],
+  ["game_folder", "reported", "Game at the project root"],
 ];
 const checks = Object.fromEntries(CHECKS.map(([k, type, label]) => [k, { label, type, status: "skipped", detail: null }]));
 const set = (k, status, detail = null, extra = {}) => Object.assign(checks[k], { status, detail, ...extra });
@@ -801,11 +804,14 @@ async function main() {
   writeFileSync(join(OUT, "requests.json"), JSON.stringify(requests, null, 1));
   finishCodeArt();
 
+  set("game_folder", SERVED_FROM === "." ? "pass" : "fail",
+      SERVED_FROM === "." ? null : { served_from: SERVED_FROM, note: "built in a subfolder; served from there, as if at the root" });
   if (gateFailed) for (const [k, c] of Object.entries(checks)) if (c.type !== "gate" && c.status === "skipped") c.detail = { reason: "gate failed" };
   const scored = Object.values(checks).filter((c) => c.type === "scored");
   const passed = scored.filter((c) => c.status === "pass").length;
   const results = {
-    evaluator_version: 8,
+    evaluator_version: 9,
+    served_from: SERVED_FROM,
     evaluated_at: new Date().toISOString(),
     gate_failed: gateFailed || checks.loads.status !== "pass" || checks.playable_loop.status !== "pass",
     manual_showcase_required: !canPlay && checks.loads.status === "pass",

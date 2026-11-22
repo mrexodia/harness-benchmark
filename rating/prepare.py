@@ -77,6 +77,15 @@ def spread_shuffle(rng, items, key, tries=500):
     return best
 
 
+def game_dir(rdir):
+    """The folder the evaluator served: the workspace, or the single subfolder it fell back to."""
+    try:
+        sub = json.loads((rdir / "eval/results.json").read_text()).get("served_from", ".")
+    except (OSError, ValueError):
+        sub = "."
+    return rdir / "workspace" / sub
+
+
 def phase_cuts(rdir, res):
     """({phase: [(file, start, duration)]}, marked) for one run, from the timeline marks.
     Without marks (or for a hand-recorded showcase) every phase gets the whole clip."""
@@ -168,7 +177,7 @@ def main():
         cuts, marked = phase_cuts(rdir, res)
         if not marked:
             no_marks.append(rid)
-        runs.append({"run": rid, "dir": rdir, "clip": clip, "cuts": cuts, "game": rdir / "workspace"})
+        runs.append({"run": rid, "dir": rdir, "clip": clip, "cuts": cuts, "game": game_dir(rdir)})
     if problems:
         sys.exit("cannot prepare:\n  " + "\n  ".join(problems))
     if not runs:
@@ -349,7 +358,7 @@ def append(runs_dir, sess, include, excludes, repeat_rate):
         if not clip.exists():
             problems.append(f"{rid}: missing {clip.relative_to(rdir)}")
             continue
-        new.append({"run": rid, "dir": rdir, "clip": clip, "cuts": phase_cuts(rdir, res)[0], "game": rdir / "workspace"})
+        new.append({"run": rid, "dir": rdir, "clip": clip, "cuts": phase_cuts(rdir, res)[0], "game": game_dir(rdir)})
     if problems:
         sys.exit("cannot append:\n  " + "\n  ".join(problems))
     if not new:
